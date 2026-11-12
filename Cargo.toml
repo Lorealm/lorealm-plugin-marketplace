@@ -1,0 +1,20 @@
+[package]
+name = "marketplace"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+description = "Checks the plugins listed here and builds the index Lorealm reads"
+
+[dependencies]
+anyhow = "1.0.104"
+clap = { version = "4.6.7", features = ["derive"] }
+lorealm_plugin_manifest = "0.1.0"
+semver = { version = "1.0.28", features = ["serde"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sha2 = "0.11.1"
+tempfile = "3.27.0"
+toml = "1.2.1"
+ureq = "3.5.2"
+zip = { version = "9.5.1", default-features = false, features = ["deflate"] }

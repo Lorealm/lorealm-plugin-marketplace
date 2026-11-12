@@ -1,0 +1,43 @@
+name: Check plugins
+
+# Checks the plugin files a pull request changes, and writes what a reviewer
+# needs to know about the versions it adds to the run's summary.
+on:
+  pull_request:
+    paths: ["plugins/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # The checker comes from the branch being merged into, so a pull
+      # request can't bring its own.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: tool
+      - uses: actions/checkout@v4
+        with:
+          path: pr
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tool
+      - name: Check the changed plugins
+        run: |
+          set -o pipefail
+          changed=()
+          for file in pr/plugins/*.toml; do
+            [ -e "$file" ] || continue
+            cmp -s "$file" "tool/plugins/$(basename "$file")" || changed+=("$PWD/$file")
+          done
+          for file in tool/plugins/*.toml; do
+            [ -e "$file" ] || continue
+            [ -e "pr/plugins/$(basename "$file")" ] ||
+              echo "**Removes \`$(basename "$file" .toml)\` from the marketplace.**" >> "$GITHUB_STEP_SUMMARY"
+          done
+          [ ${#changed[@]} -gt 0 ] || exit 0
+          cd tool
+          cargo run --release --quiet -- check --previous plugins "${changed[@]}" | tee -a "$GITHUB_STEP_SUMMARY"

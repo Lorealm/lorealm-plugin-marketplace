@@ -1,0 +1,50 @@
+name: Flag changes to what's listed
+
+# Comments on a pull request that does more than add a plugin or a version:
+# one that removes a plugin, or removes or alters a version already listed.
+#
+# It runs with a token that can comment, on pull requests nobody has looked
+# at yet, so it only ever reads the pull request's plugin files as data. The
+# tool that reads them comes from the branch being merged into, and nothing
+# from the pull request is built or run.
+on:
+  pull_request_target:
+    paths: ["plugins/**"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  flag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: tool
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
+          path: pr
+          persist-credentials: false
+          sparse-checkout: plugins
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tool
+      - name: Compare with what's listed
+        working-directory: tool
+        run: |
+          mkdir -p ../pr/plugins
+          cargo run --release --quiet -- additive --previous plugins --current ../pr/plugins > ../findings.md
+      - name: Comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -s findings.md ]; then
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body-file findings.md
+            exit 1
+          fi
+          # Nothing is taken back any more: say so where it was flagged before.
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --edit-last \
+            --body "This pull request now only adds to what's listed." 2>/dev/null || true
