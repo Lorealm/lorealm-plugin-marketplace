@@ -1,0 +1,6 @@
+repository = "https://github.com/crux-03/lorealm-plugin-hypebot"
+
+[[versions]]
+version = "0.1.0"
+url = "https://github.com/crux-03/lorealm-plugin-hypebot/releases/download/v0.1.0/hypebot-0.1.0.zip"
+sha256 = "464d65fe19eeb1dad1d1a9137010d2d0a70feb87d77c94cbbe40c747a82b763e"
