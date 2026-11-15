@@ -1,0 +1,6 @@
+repository = "https://github.com/crux-03/lorealm-plugin-color-suite"
+
+[[versions]]
+version = "0.1.0"
+url = "https://github.com/crux-03/lorealm-plugin-color-suite/releases/download/v0.1.0/color_suite-0.1.0.zip"
+sha256 = "8461fd7989c98eeb00433aa3f2357d5b02dcb24cdf0d5943da14ef7da5c7a77f"
