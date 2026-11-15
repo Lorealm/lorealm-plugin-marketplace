@@ -41,6 +41,8 @@ to stricter guidelines:
 otherwise be considered a breach of security/privacy, to a 3rd party address.
 4. The plugin may not include code meant to purposefully slow down or degrade the user's
 experience when using Lorealm.
+5. The plugin repository must include a LICENSE file with anOSI-approved
+(https://opensource.org/licenses) open-source license.
 
 Failing to meet any of these requirements will result in your Pull Request being closed.
 
@@ -108,3 +110,6 @@ cargo run -- additive --previous <old plugins> --current <new plugins>   # what 
 cargo run -- build                          # write site/index.json and site/readme/
 cargo test
 ```
+
+## Licensing
+This repository is licensed under MIT. That covers the tool and the plugin files submitted to plugins/. It does not cover the plugins themselves, which are released by their authors under their own licenses.
